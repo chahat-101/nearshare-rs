@@ -92,7 +92,14 @@ async fn index() -> impl Responder{
                     fileList.innerHTML = '';
                     files.forEach(file => {
                         const li = document.createElement('li');
-                        li.innerHTML = `<a href="/api/download/${file}" download>${file}</a>`;
+                        const a = document.createElement('a');
+                        a.href = '#';
+                        a.textContent = file;
+                        a.onclick = (e) => {
+                            e.preventDefault();
+                            downloadFile(file);
+                        };
+                        li.appendChild(a);
                         fileList.appendChild(li);
                     });
                 }
@@ -108,6 +115,25 @@ async fn index() -> impl Responder{
                         body: formData
                     });
                     listFiles();
+                }
+                async function downloadFile(filename) {
+                    const response = await fetch(`/api/download/${filename}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    } else {
+                        alert('Download failed.');
+                    }
                 }
             </script>
         </body>
