@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NS-RS // RAW_MONOCHROME</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
+
+    :root {
+      --bg: #FFFFFF;
+      --fg: #000000;
+      --font: 'JetBrains Mono', monospace;
+      --border: 1px solid var(--fg);
+    }
+
+    body[data-theme="dark"] {
+      --bg: #000000;
+      --fg: #FFFFFF;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--font);
+      font-size: 13px;
+      min-height: 100vh;
+      line-height: 1.4;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .app-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-left: var(--border);
+      border-right: var(--border);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      border-bottom: var(--border);
+      padding: 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      text-transform: uppercase;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    #connectionPill {
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.5rem 1rem;
+      border: var(--border);
+    }
+
+    #connectionPill.online {
+      background-color: var(--fg);
+      color: var(--bg);
+    }
+
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    section {
+      padding: 2.5rem;
+      border-bottom: var(--border);
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .border-right {
+      border-right: var(--border);
+    }
+
+    h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      line-height: 0.9;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      display: inline-block;
+      border-bottom: 2px solid var(--fg);
+    }
+
+    .field {
+      margin-bottom: 2.5rem;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      background-color: transparent;
+      border: var(--border);
+      padding: 0.75rem;
+      color: var(--fg);
+      font-family: var(--font);
+      outline: none;
+    }
+
+    input:focus {
+      background-color: var(--fg);
+      color: var(--bg);
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    button {
+      background-color: transparent;
+      border: var(--border);
+      color: var(--fg);
+      padding: 0.75rem 1.5rem;
+      font-family: var(--font);
+      font-weight: 700;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    button:hover {
+      background-color: var(--fg);
+      color: var(--bg);
+    }
+
+    button:disabled {
+      opacity: 0.3;
+      cursor: wait;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-bottom: var(--border);
+    }
+
+    .metric-item {
+      padding: 1.5rem 2.5rem;
+      border-right: var(--border);
+    }
+
+    .metric-item:last-child {
+      border-right: none;
+    }
+
+    .metric-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+
+    .metric-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .drop-zone {
+      display: none;
+      border: 1px dashed var(--fg);
+      padding: 4rem 2rem;
+      text-align: center;
+      margin-top: 2rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .drop-zone:hover, .drop-zone.dragover {
+      background-color: var(--fg);
+      color: var(--bg);
+    }
+
+    .file-list {
+      list-style: none;
+      margin-top: 2rem;
+    }
+
+    .file-item {
+      padding: 1rem 0;
+      border-bottom: var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .file-item:last-child {
+      border-bottom: none;
+    }
+
+    .file-info .name {
+      font-weight: 700;
+    }
+
+    .status-msg {
+      margin-top: 1.5rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      min-height: 1.2em;
+    }
+
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      cursor: pointer;
+      padding: 0.5rem 0;
+    }
+
+    .switch {
+      width: 30px;
+      height: 15px;
+      border: var(--border);
+      position: relative;
+    }
+
+    .switch::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 13px;
+      height: 13px;
+      background-color: var(--fg);
+    }
+
+    #uploadToggle:checked + .toggle-container .switch::after {
+      left: auto;
+      right: 0;
+    }
+
+    .hidden { display: none; }
+
+    footer {
+      padding: 2.5rem;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-top: auto;
+      border-top: var(--border);
+    }
+
+    @media (max-width: 900px) {
+      main { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: 1fr; }
+      .metric-item { border-right: none; border-bottom: var(--border); }
+      .metric-item:last-child { border-bottom: none; }
+      h1 { font-size: 2.5rem; }
+      .app-shell { border: none; }
+      header { padding: 1.5rem; }
+      section { padding: 1.5rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell">
+    <header>
+      <div class="logo">NS-RS_PROTOCOL</div>
+      <div class="nav-actions">
+        <button id="themeToggle" type="button">INVERT_THEME</button>
+        <div id="connectionPill">LOCKED</div>
+      </div>
+    </header>
+
+    <div class="metrics">
+      <div class="metric-item">
+        <div class="metric-label">STATUS</div>
+        <div class="metric-value" id="sessionMetric">LOCKED</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-label">MODE</div>
+        <div class="metric-value" id="transferMetric">IDLE</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-label">INDEX</div>
+        <div class="metric-value" id="filesMetric">0_OBJ</div>
+      </div>
+    </div>
+
+    <main>
+      <section class="full-width">
+        <h1>AES_256_GCM_SECURE_SHARE</h1>
+        <p>RAW AUTHENTICATED TRANSFER. NO BUFFER. FULL ENCRYPTION.</p>
+      </section>
+
+      <section class="border-right" id="authCard">
+        <h2>AUTHENTICATE</h2>
+        <div class="field">
+          <label for="username">ID_ENTRY</label>
+          <input type="text" id="username" placeholder="USERNAME" autocomplete="username" />
+        </div>
+        <div class="field">
+          <label for="password">KEY_ENTRY</label>
+          <input type="password" id="password" placeholder="PASSWORD" autocomplete="current-password" />
+        </div>
+        <div class="button-group">
+          <button id="loginBtn" onclick="login()">INIT_SESSION</button>
+          <button onclick="fillDemo()">LOAD_DEMO</button>
+        </div>
+        <div class="status-msg" id="authStatus"></div>
+      </section>
+
+      <section class="hidden" id="transferPanel">
+        <h2>OPERATIONS</h2>
+        <input type="checkbox" id="uploadToggle" class="hidden" />
+        <label for="uploadToggle" class="toggle-container">
+          <div class="switch"></div>
+          <span class="metric-label">ARM_TRANSFER_PROTOCOL</span>
+        </label>
+
+        <div class="button-group">
+          <button id="uploadBtn" onclick="uploadFile()">EXEC_UPLOAD</button>
+          <button onclick="clearSelection()">PURGE_QUEUE</button>
+          <button onclick="logout()">TERM_SESSION</button>
+        </div>
+
+        <label class="drop-zone" id="dropzone" for="fileInput">
+          [ DROP_RAW_DATA ]
+        </label>
+        <input type="file" id="fileInput" multiple class="hidden" />
+
+        <div class="status-msg" id="uploadStatus"></div>
+      </section>
+
+      <section class="hidden" id="filesCard">
+        <h2>OBJECT_INDEX</h2>
+        <div class="button-group">
+          <button onclick="listFiles()">REFRESH</button>
+        </div>
+        <ul class="file-list" id="fileList"></ul>
+        <div class="status-msg" id="filesStatus"></div>
+      </section>
+    </main>
+
+    <footer>
+      SECURE_FILE_SHARE // NEARSHARE_RS // MDNS_DISTRIBUTED // RAW_MONOCHROME
+    </footer>
+  </div>
+
+  <script>
+    let token = null;
+    const SESSION_TOKEN_KEY = 'nearshare.session.token';
+    const THEME_KEY = 'nearshare.theme';
+
+    const authCard = document.getElementById('authCard');
+    const transferPanel = document.getElementById('transferPanel');
+    const filesCard = document.getElementById('filesCard');
+    const connectionPill = document.getElementById('connectionPill');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+    const dropzone = document.getElementById('dropzone');
+    const uploadToggle = document.getElementById('uploadToggle');
+    const sessionMetric = document.getElementById('sessionMetric');
+    const transferMetric = document.getElementById('transferMetric');
+    const filesMetric = document.getElementById('filesMetric');
+    const themeToggle = document.getElementById('themeToggle');
+
+    function setStatus(id, msg, type = '') {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = msg || '';
+    }
+
+    function setConnected(connected) {
+      connectionPill.textContent = connected ? 'AUTHORIZED' : 'LOCKED';
+      connectionPill.className = connected ? 'online' : '';
+      sessionMetric.textContent = connected ? 'ACTIVE' : 'LOCKED';
+    }
+
+    function setSessionToken(nextToken) {
+      token = nextToken;
+      if (nextToken) {
+        localStorage.setItem(SESSION_TOKEN_KEY, nextToken);
+      } else {
+        localStorage.removeItem(SESSION_TOKEN_KEY);
+      }
+    }
+
+    function showAuthenticatedUi() {
+      authCard.classList.add('hidden');
+      transferPanel.classList.remove('hidden');
+      filesCard.classList.remove('hidden');
+      setConnected(true);
+      setStatus('authStatus', '');
+    }
+
+    function showLoggedOutUi(message = '') {
+      authCard.classList.remove('hidden');
+      transferPanel.classList.add('hidden');
+      filesCard.classList.add('hidden');
+      fileList.innerHTML = '';
+      fileInput.value = '';
+      uploadToggle.checked = false;
+      dropzone.style.display = 'none';
+      transferMetric.textContent = 'IDLE';
+      filesMetric.textContent = '0_OBJ';
+      setConnected(false);
+      setStatus('filesStatus', '');
+      setStatus('uploadStatus', '');
+      setStatus('authStatus', message);
+    }
+
+    async function authorizedFetch(url, options = {}) {
+      const headers = new Headers(options.headers || {});
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+
+      const response = await fetch(url, { ...options, headers });
+      if (response.status === 401) {
+        logout('SESSION_EXPIRED');
+      }
+
+      return response;
+    }
+
+    function fillDemo() {
+      document.getElementById('username').value = 'admin';
+      document.getElementById('password').value = 'password';
+    }
+
+    async function login() {
+      setStatus('authStatus', '');
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!username || !password) {
+        setStatus('authStatus', 'ENTRY_REQUIRED');
+        return;
+      }
+
+      const loginBtn = document.getElementById('loginBtn');
+      loginBtn.disabled = true;
+
+      try {
+        const response = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        if (!response.ok) {
+          setStatus('authStatus', 'ACCESS_DENIED');
+          setConnected(false);
+          return;
+        }
+
+        const data = await response.json();
+        if (data.token) {
+          setSessionToken(data.token);
+          showAuthenticatedUi();
+          await listFiles();
+        } else {
+          setStatus('authStatus', 'SERVER_ERROR');
+          setConnected(false);
+        }
+      } catch (err) {
+        setStatus('authStatus', 'CONN_FAILURE');
+        setConnected(false);
+      } finally {
+        loginBtn.disabled = false;
+      }
+    }
+
+    async function listFiles() {
+      setStatus('filesStatus', 'SYNCING...');
+      try {
+        const response = await authorizedFetch('/api/files');
+        if (!response.ok) {
+          setStatus('filesStatus', 'SYNC_FAILED');
+          return;
+        }
+
+        const files = await response.json();
+        fileList.innerHTML = '';
+
+        if (!files.length) {
+          fileList.innerHTML = '<li class="file-item"><div class="file-info"><span class="name">INDEX_EMPTY</span></div></li>';
+        } else {
+          files.sort((a, b) => a.localeCompare(b));
+          files.forEach((file) => {
+            const li = document.createElement('li');
+            li.className = 'file-item';
+
+            const info = document.createElement('div');
+            info.className = 'file-info';
+            
+            const name = document.createElement('span');
+            name.className = 'name';
+            name.textContent = file;
+
+            const btn = document.createElement('button');
+            btn.textContent = 'EXTRACT';
+            btn.onclick = () => downloadFile(file);
+
+            info.appendChild(name);
+            li.appendChild(info);
+            li.appendChild(btn);
+            fileList.appendChild(li);
+          });
+        }
+
+        setStatus('filesStatus', `ACTIVE: ${files.length}`);
+        filesMetric.textContent = `${files.length}_OBJ`;
+      } catch (err) {
+        setStatus('filesStatus', 'UNREACHABLE');
+      }
+    }
+
+    async function uploadFile() {
+      if (!fileInput.files.length) {
+        setStatus('uploadStatus', 'NO_DATA');
+        return;
+      }
+
+      const formData = new FormData();
+      for (const file of fileInput.files) {
+        formData.append('files', file);
+      }
+
+      const uploadBtn = document.getElementById('uploadBtn');
+      uploadBtn.disabled = true;
+      setStatus('uploadStatus', 'ENCRYPTING...');
+
+      try {
+        const response = await authorizedFetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          setStatus('uploadStatus', 'TRANS_FAIL');
+          return;
+        }
+
+        clearSelection();
+        uploadToggle.checked = false;
+        dropzone.style.display = 'none';
+        setStatus('uploadStatus', 'COMPLETE');
+        await listFiles();
+      } catch (err) {
+        setStatus('uploadStatus', 'ENDPOINT_ERROR');
+      } finally {
+        uploadBtn.disabled = false;
+      }
+    }
+
+    async function downloadFile(filename) {
+      setStatus('filesStatus', `EXTRACTING: ${filename}`);
+
+      try {
+        const response = await authorizedFetch(`/api/download/${encodeURIComponent(filename)}`);
+        if (!response.ok) {
+          setStatus('filesStatus', 'FAIL');
+          return;
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        setStatus('filesStatus', `DONE: ${filename}`);
+      } catch (err) {
+        setStatus('filesStatus', 'STREAM_ERROR');
+      }
+    }
+
+    function clearSelection() {
+      fileInput.value = '';
+      transferMetric.textContent = uploadToggle.checked ? 'ARMED' : 'IDLE';
+      setStatus('uploadStatus', 'PURGED');
+    }
+
+    function logout(message = 'SESSION_TERM') {
+      setSessionToken(null);
+      showLoggedOutUi(message);
+    }
+
+    function applyTheme(theme) {
+      document.body.dataset.theme = theme;
+      themeToggle.textContent = theme === 'dark' ? 'INVERT_TO_LIGHT' : 'INVERT_TO_DARK';
+      localStorage.setItem(THEME_KEY, theme);
+    }
+
+    async function restoreSession() {
+      const savedToken = localStorage.getItem(SESSION_TOKEN_KEY);
+      if (!savedToken) {
+        showLoggedOutUi('');
+        return;
+      }
+
+      setSessionToken(savedToken);
+      setStatus('authStatus', 'RESUMING...');
+
+      try {
+        const response = await authorizedFetch('/api/session');
+        if (!response.ok) {
+          if (response.status !== 401) {
+            showLoggedOutUi('RESUME_FAIL');
+          }
+          return;
+        }
+
+        showAuthenticatedUi();
+        await listFiles();
+      } catch (err) {
+        showLoggedOutUi('RESUME_FAIL');
+      }
+    }
+
+    uploadToggle.addEventListener('change', () => {
+      dropzone.style.display = uploadToggle.checked ? 'block' : 'none';
+      transferMetric.textContent = uploadToggle.checked ? 'ARMED' : 'IDLE';
+      if (!uploadToggle.checked) {
+        clearSelection();
+      }
+    });
+
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.classList.remove('dragover');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      if (e.dataTransfer && e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        transferMetric.textContent = `${e.dataTransfer.files.length}_QUEUED`;
+        setStatus('uploadStatus', `${e.dataTransfer.files.length}_OBJ_STAGED`);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const count = e.target.files.length;
+      if (count) {
+        transferMetric.textContent = `${count}_QUEUED`;
+        setStatus('uploadStatus', `${count}_OBJ_STAGED`);
+      }
+    });
+
+    themeToggle.addEventListener('click', () => {
+      const nextTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+      applyTheme(nextTheme);
+    });
+
+    applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+    restoreSession();
+  </script>
+</body>
+
+</html>
