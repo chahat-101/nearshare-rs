@@ -52,6 +52,10 @@ async fn authenticate(
     state:web::Data<AppState>,
 ) -> impl Responder{
     if req.username == "admin" && req.password == "password"{
+        // Start each authenticated use with a fresh upload set.
+        if clear_uploads_dir().await.is_err() {
+            return HttpResponse::InternalServerError().body("Failed to reset uploads");
+        }
 
         let token = rand::thread_rng()
                 .sample_iter(&rand::distributions::Alphanumeric)
@@ -78,12 +82,41 @@ fn authenticated_username(
     state.auth_tokens.lock().unwrap().get(token).cloned()
 }
 
+fn authenticated_token(
+    req: &actix_web::HttpRequest,
+    state: &web::Data<AppState>,
+) -> Option<String> {
+    let auth_header = req.headers().get("Authorization")?;
+    let auth_str = auth_header.to_str().ok()?;
+    let token = auth_str.strip_prefix("Bearer ")?.to_string();
+    if state.auth_tokens.lock().unwrap().contains_key(&token) {
+        Some(token)
+    } else {
+        None
+    }
+}
+
 async fn session(
     state: web::Data<AppState>,
     req: actix_web::HttpRequest,
 ) -> impl Responder {
     if let Some(username) = authenticated_username(&req, &state) {
         return HttpResponse::Ok().json(SessionResponse { username });
+    }
+
+    HttpResponse::Unauthorized().finish()
+}
+
+async fn logout(
+    state: web::Data<AppState>,
+    req: actix_web::HttpRequest,
+) -> impl Responder {
+    if let Some(token) = authenticated_token(&req, &state) {
+        state.auth_tokens.lock().unwrap().remove(&token);
+        if clear_uploads_dir().await.is_err() {
+            return HttpResponse::InternalServerError().body("Failed to clear uploads");
+        }
+        return HttpResponse::Ok().finish();
     }
 
     HttpResponse::Unauthorized().finish()
@@ -243,6 +276,7 @@ let hostname = format!("{}.local.",
                     .route("/", web::get().to(index))
                     .route("/api/auth", web::post().to(authenticate))
                     .route("/api/session", web::get().to(session))
+                    .route("/api/logout", web::post().to(logout))
                     .route("/api/upload",web::post().to(upload_file))
                     .route("/api/files", web::get().to(list_files)) 
                     .route("/api/download/{filename}", web::get().to(download_file))

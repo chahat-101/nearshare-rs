@@ -6,6 +6,7 @@ Secure local file sharing with AES-256-GCM encryption, built with Rust and Actix
 
 - 🔐 AES-256-GCM encryption for all files
 - 🔑 Token-based authentication
+- 💾 Persistent browser session across page reloads
 - 📤 Multiple file upload support
 - 🌐 mDNS service discovery
 - 💻 Web-based interface
@@ -23,6 +24,7 @@ Open `http://localhost:8080` and login:
 ## API Endpoints
 
 - `POST /api/auth` - Login and get token
+- `GET /api/session` - Validate an existing session token
 - `POST /api/upload` - Upload files (requires auth)
 - `GET /api/files` - List files (requires auth)
 - `GET /api/download/{filename}` - Download file (requires auth)
