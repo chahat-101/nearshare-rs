@@ -4,20 +4,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NS-RS // RAW_MONOCHROME</title>
+  <title>NearShare // Secure File Sharing</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
-
     :root {
-      --bg: #FFFFFF;
-      --fg: #000000;
-      --font: 'JetBrains Mono', monospace;
-      --border: 1px solid var(--fg);
+      --bg: #ffffff;
+      --surface: #ffffff;
+      --surface-strong: #fff4ea;
+      --border: #000000;
+      --text: #000000;
+      --text-soft: #222222;
+      --accent: #ff6a00;
+      --accent-soft: #ffc08f;
+      --ok: #127a1f;
+      --error: #b11111;
+      --offset-shadow: 8px 8px 0 0 var(--accent);
+      --font: "Arial", "Helvetica Neue", "Segoe UI", sans-serif;
     }
 
     body[data-theme="dark"] {
       --bg: #000000;
-      --fg: #FFFFFF;
+      --surface: #101010;
+      --surface-strong: #1a1a1a;
+      --border: #ffffff;
+      --text: #ffffff;
+      --text-soft: #d2d2d2;
+      --accent: #ff7a1a;
+      --accent-soft: #3a210f;
+      --ok: #5eff85;
+      --error: #ff6c6c;
+      --offset-shadow: 8px 8px 0 0 #ffffff;
     }
 
     * {
@@ -27,360 +42,447 @@
     }
 
     body {
-      background-color: var(--bg);
-      color: var(--fg);
+      background: var(--bg);
+      color: var(--text);
       font-family: var(--font);
-      font-size: 13px;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
       min-height: 100vh;
-      line-height: 1.4;
-      transition: background 0.15s, color 0.15s;
+      line-height: 1.45;
+      transition: background 0.15s linear, color 0.15s linear;
     }
 
     .app-shell {
-      max-width: 1200px;
+      max-width: 980px;
       margin: 0 auto;
-      border-left: var(--border);
-      border-right: var(--border);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      padding: 0 1.25rem 2.5rem;
     }
 
-    header {
-      border-bottom: var(--border);
-      padding: 2.5rem;
+    nav {
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      padding: 1rem 0;
       display: flex;
       justify-content: space-between;
-      align-items: flex-end;
+      align-items: center;
+      z-index: 100;
+      border-bottom: 4px solid var(--border);
+      margin-bottom: 2rem;
     }
 
     .logo {
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: -1px;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       text-transform: uppercase;
     }
 
-    .nav-actions {
+    .nav-buttons {
       display: flex;
-      gap: 2rem;
+      gap: 0.6rem;
       align-items: center;
     }
 
-    #connectionPill {
-      font-weight: 700;
+    .btn-nav {
+      background: var(--surface);
+      border: 3px solid var(--border);
+      color: var(--text);
+      padding: 0.5rem 0.8rem;
+      font-size: 0.74rem;
+      font-weight: 900;
       text-transform: uppercase;
-      padding: 0.5rem 1rem;
-      border: var(--border);
+      cursor: pointer;
+      transition: background 0.12s linear, color 0.12s linear;
     }
 
-    #connectionPill.online {
-      background-color: var(--fg);
-      color: var(--bg);
+    .btn-nav:hover {
+      background: var(--accent);
+      color: #000000;
     }
 
-    main {
-      flex: 1;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-
-    section {
-      padding: 2.5rem;
-      border-bottom: var(--border);
-    }
-
-    .full-width {
-      grid-column: 1 / -1;
-    }
-
-    .border-right {
-      border-right: var(--border);
-    }
-
-    h1 {
-      font-size: 4rem;
-      font-weight: 800;
-      line-height: 0.9;
-      text-transform: uppercase;
+    .hero {
+      text-align: center;
       margin-bottom: 1.5rem;
+      border: 4px solid var(--border);
+      background: var(--accent);
+      color: #000000;
+      padding: 1.6rem 1rem;
+      box-shadow: var(--offset-shadow);
     }
 
-    h2 {
-      font-size: 1rem;
-      font-weight: 700;
+    .hero h1 {
+      font-size: clamp(1.9rem, 5vw, 3rem);
+      font-weight: 900;
+      margin-bottom: 0.6rem;
       text-transform: uppercase;
-      margin-bottom: 2rem;
-      display: inline-block;
-      border-bottom: 2px solid var(--fg);
+      line-height: 1.1;
     }
 
-    .field {
-      margin-bottom: 2.5rem;
+    .hero p {
+      color: #000000;
+      font-size: 0.95rem;
+      max-width: 680px;
+      margin: 0 auto;
+      text-transform: uppercase;
     }
 
-    .field label {
+    .card {
+      background: var(--surface);
+      border: 4px solid var(--border);
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--offset-shadow);
+    }
+
+    .card h2 {
+      font-size: 1.05rem;
+      font-weight: 900;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    .form-group {
+      margin-bottom: 0.9rem;
+    }
+
+    .form-group label {
       display: block;
-      font-size: 0.75rem;
-      font-weight: 700;
+      font-size: 0.73rem;
+      font-weight: 900;
+      margin-bottom: 0.35rem;
+      color: var(--text-soft);
       text-transform: uppercase;
-      margin-bottom: 0.75rem;
     }
 
-    input[type="text"],
-    input[type="password"] {
+    input {
       width: 100%;
-      background-color: transparent;
-      border: var(--border);
-      padding: 0.75rem;
-      color: var(--fg);
+      background: var(--surface);
+      border: 3px solid var(--border);
+      padding: 0.7rem 0.8rem;
+      color: var(--text);
       font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 700;
       outline: none;
+      transition: background 0.12s linear;
     }
 
     input:focus {
-      background-color: var(--fg);
-      color: var(--bg);
+      background: var(--accent-soft);
     }
 
-    .button-group {
+    .actions {
       display: flex;
+      gap: 0.7rem;
+      margin-top: 1.2rem;
       flex-wrap: wrap;
-      gap: 1rem;
     }
 
-    button {
-      background-color: transparent;
-      border: var(--border);
-      color: var(--fg);
-      padding: 0.75rem 1.5rem;
+    .btn {
+      padding: 0.65rem 1rem;
       font-family: var(--font);
-      font-weight: 700;
+      font-size: 0.76rem;
+      font-weight: 900;
       text-transform: uppercase;
       cursor: pointer;
-      font-size: 0.8rem;
+      transition: background 0.12s linear, color 0.12s linear;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid var(--border);
+      gap: 0.4rem;
     }
 
-    button:hover {
-      background-color: var(--fg);
+    .btn-primary {
+      background: var(--accent);
+      color: #000000;
+    }
+
+    .btn-primary:hover {
+      background: #ffa45d;
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: var(--text);
       color: var(--bg);
+      border-color: var(--text);
     }
 
-    button:disabled {
-      opacity: 0.3;
-      cursor: wait;
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
     }
 
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      border-bottom: var(--border);
+    .btn-compact {
+      padding: 0.36rem 0.7rem;
+      font-size: 0.68rem;
     }
 
-    .metric-item {
-      padding: 1.5rem 2.5rem;
-      border-right: var(--border);
+    .how-to-use {
+      background: var(--accent);
+      color: #000000;
     }
 
-    .metric-item:last-child {
-      border-right: none;
+    .how-to-use h2,
+    .how-to-use li,
+    .how-to-use strong {
+      color: #000000;
     }
 
-    .metric-label {
-      font-size: 0.65rem;
-      text-transform: uppercase;
+    .how-to-use ol {
+      padding-left: 1.1rem;
+    }
+
+    .how-to-use li {
       margin-bottom: 0.5rem;
+      font-size: 0.88rem;
       font-weight: 700;
     }
 
-    .metric-value {
-      font-size: 1.25rem;
-      font-weight: 700;
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      border: 3px solid #000000;
+      padding: 0.2rem 0.55rem;
+      font-size: 0.65rem;
+      font-weight: 900;
+      background: #ffffff;
+      color: #000000;
+      margin-bottom: 0.6rem;
+      text-transform: uppercase;
+    }
+
+    .status-badge.online {
+      background: #000000;
+      color: #ffffff;
+    }
+
+    .file-list {
+      list-style: none;
+      border-top: 3px solid var(--border);
+    }
+
+    .file-item {
+      padding: 0.9rem 0.5rem;
+      border-bottom: 3px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .file-item:hover {
+      background: var(--surface-strong);
+    }
+
+    .file-info .name {
+      font-weight: 900;
+      display: block;
+      font-size: 0.92rem;
+    }
+
+    .file-info .meta {
+      font-size: 0.7rem;
+      color: var(--text-soft);
       text-transform: uppercase;
     }
 
     .drop-zone {
       display: none;
-      border: 1px dashed var(--fg);
-      padding: 4rem 2rem;
+      border: 3px dashed var(--border);
+      padding: 1.8rem;
       text-align: center;
-      margin-top: 2rem;
-      text-transform: uppercase;
-      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-soft);
       cursor: pointer;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      font-weight: 900;
     }
 
     .drop-zone:hover, .drop-zone.dragover {
-      background-color: var(--fg);
-      color: var(--bg);
+      background: var(--accent);
+      border-color: var(--border);
+      color: #000000;
     }
 
-    .file-list {
-      list-style: none;
-      margin-top: 2rem;
-    }
-
-    .file-item {
-      padding: 1rem 0;
-      border-bottom: var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .file-item:last-child {
-      border-bottom: none;
-    }
-
-    .file-info .name {
-      font-weight: 700;
-    }
-
-    .status-msg {
-      margin-top: 1.5rem;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      font-weight: 700;
-      min-height: 1.2em;
-    }
-
-    .toggle-container {
+    .toggle-wrap {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
       cursor: pointer;
-      padding: 0.5rem 0;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      font-weight: 900;
     }
 
     .switch {
-      width: 30px;
-      height: 15px;
-      border: var(--border);
+      width: 42px;
+      height: 22px;
+      background: var(--surface);
+      border: 3px solid var(--border);
       position: relative;
     }
 
     .switch::after {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 13px;
-      height: 13px;
-      background-color: var(--fg);
+      top: 2px;
+      left: 2px;
+      width: 12px;
+      height: 12px;
+      background: var(--border);
     }
 
-    #uploadToggle:checked + .toggle-container .switch::after {
-      left: auto;
-      right: 0;
+    #uploadToggle:checked + .toggle-wrap .switch {
+      background: var(--accent);
     }
 
-    .hidden { display: none; }
+    #uploadToggle:checked + .toggle-wrap .switch::after {
+      left: 22px;
+      background: #000000;
+    }
 
-    footer {
-      padding: 2.5rem;
+    .footer {
+      text-align: center;
+      padding: 1rem 0;
+      font-size: 0.68rem;
+      font-weight: 900;
+      color: var(--text-soft);
       text-transform: uppercase;
-      font-size: 0.75rem;
-      font-weight: 700;
-      margin-top: auto;
-      border-top: var(--border);
+      border-top: 4px solid var(--border);
+      margin-top: 1.6rem;
     }
 
-    @media (max-width: 900px) {
-      main { grid-template-columns: 1fr; }
-      .metrics { grid-template-columns: 1fr; }
-      .metric-item { border-right: none; border-bottom: var(--border); }
-      .metric-item:last-child { border-bottom: none; }
-      h1 { font-size: 2.5rem; }
-      .app-shell { border: none; }
-      header { padding: 1.5rem; }
-      section { padding: 1.5rem; }
+    .status-msg {
+      margin-top: 0.65rem;
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 1.8rem; }
+      .app-shell { padding: 0 1rem 2rem; }
+      .btn, .btn-nav { width: 100%; }
+      .nav-buttons { width: 52%; }
+      nav { gap: 0.7rem; align-items: flex-start; }
     }
   </style>
 </head>
 
 <body>
   <div class="app-shell">
-    <header>
-      <div class="logo">NS-RS_PROTOCOL</div>
-      <div class="nav-actions">
-        <button id="themeToggle" type="button">INVERT_THEME</button>
-        <div id="connectionPill">LOCKED</div>
+    <nav>
+      <a href="#" class="logo" onclick="toggleSection('home')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M12 12v9"></path><path d="m8 17 4 4 4-4"></path></svg>
+        NearShare
+      </a>
+      <div class="nav-buttons">
+        <button class="btn-nav" onclick="toggleSection('how-to-use')">How to Use</button>
+        <button class="btn-nav" id="themeToggle" type="button">Theme</button>
       </div>
-    </header>
-
-    <div class="metrics">
-      <div class="metric-item">
-        <div class="metric-label">STATUS</div>
-        <div class="metric-value" id="sessionMetric">LOCKED</div>
-      </div>
-      <div class="metric-item">
-        <div class="metric-label">MODE</div>
-        <div class="metric-value" id="transferMetric">IDLE</div>
-      </div>
-      <div class="metric-item">
-        <div class="metric-label">INDEX</div>
-        <div class="metric-value" id="filesMetric">0_OBJ</div>
-      </div>
-    </div>
+    </nav>
 
     <main>
-      <section class="full-width">
-        <h1>AES_256_GCM_SECURE_SHARE</h1>
-        <p>RAW AUTHENTICATED TRANSFER. NO BUFFER. FULL ENCRYPTION.</p>
+      <section class="hero" id="hero">
+        <div id="connectionPill" class="status-badge">Locked</div>
+        <h1>Simple, Secure File Sharing</h1>
+        <p>Private, end-to-end encrypted file sharing for you and your team.</p>
       </section>
 
-      <section class="border-right" id="authCard">
-        <h2>AUTHENTICATE</h2>
-        <div class="field">
-          <label for="username">ID_ENTRY</label>
-          <input type="text" id="username" placeholder="USERNAME" autocomplete="username" />
+      <!-- Sign In Card -->
+      <section class="card" id="authCard">
+        <h2>Sign In</h2>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="admin" autocomplete="username" />
         </div>
-        <div class="field">
-          <label for="password">KEY_ENTRY</label>
-          <input type="password" id="password" placeholder="PASSWORD" autocomplete="current-password" />
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" />
         </div>
-        <div class="button-group">
-          <button id="loginBtn" onclick="login()">INIT_SESSION</button>
-          <button onclick="fillDemo()">LOAD_DEMO</button>
+        <div class="actions">
+          <button class="btn btn-primary" id="loginBtn" onclick="login()">Sign In</button>
+          <button class="btn btn-secondary" onclick="fillDemo()">Try Demo</button>
         </div>
-        <div class="status-msg" id="authStatus"></div>
+        <div class="status-msg hidden" id="authStatus"></div>
       </section>
 
-      <section class="hidden" id="transferPanel">
-        <h2>OPERATIONS</h2>
-        <input type="checkbox" id="uploadToggle" class="hidden" />
-        <label for="uploadToggle" class="toggle-container">
-          <div class="switch"></div>
-          <span class="metric-label">ARM_TRANSFER_PROTOCOL</span>
-        </label>
-
-        <div class="button-group">
-          <button id="uploadBtn" onclick="uploadFile()">EXEC_UPLOAD</button>
-          <button onclick="clearSelection()">PURGE_QUEUE</button>
-          <button onclick="logout()">TERM_SESSION</button>
+      <!-- How to Use Card -->
+      <section class="card how-to-use hidden" id="howToUseSection">
+        <h2>How to Use NearShare</h2>
+        <ol>
+          <li><strong>Sign In</strong> with your credentials. Use the "Try Demo" button for a quick start.</li>
+          <li>Once signed in, toggle <strong>Enable Uploading</strong> to prepare your files.</li>
+          <li><strong>Drag and drop</strong> files into the zone or click to select them from your computer.</li>
+          <li>Your files are <strong>encrypted instantly</strong> and saved securely on the server.</li>
+          <li>Refresh the list to see your files and <strong>Download</strong> them anytime.</li>
+        </ol>
+        <div class="actions">
+          <button class="btn btn-secondary" onclick="toggleSection('home')">Got it!</button>
         </div>
-
-        <label class="drop-zone" id="dropzone" for="fileInput">
-          [ DROP_RAW_DATA ]
-        </label>
-        <input type="file" id="fileInput" multiple class="hidden" />
-
-        <div class="status-msg" id="uploadStatus"></div>
       </section>
 
-      <section class="hidden" id="filesCard">
-        <h2>OBJECT_INDEX</h2>
-        <div class="button-group">
-          <button onclick="listFiles()">REFRESH</button>
-        </div>
-        <ul class="file-list" id="fileList"></ul>
-        <div class="status-msg" id="filesStatus"></div>
-      </section>
+      <!-- Dashboard (Visible after login) -->
+      <div id="dashboard" class="hidden">
+        <section class="card">
+          <h2>Upload Files</h2>
+          <input type="checkbox" id="uploadToggle" class="hidden" />
+          <label for="uploadToggle" class="toggle-wrap">
+            <div class="switch"></div>
+            <span>Enable Uploading</span>
+          </label>
+
+          <label class="drop-zone" id="dropzone" for="fileInput">
+            Drag files here or click to browse
+          </label>
+          <input type="file" id="fileInput" multiple class="hidden" />
+
+          <div class="actions" id="uploadActions">
+            <button class="btn btn-primary" id="uploadBtn" onclick="uploadFile()">Upload Files</button>
+            <button class="btn btn-secondary" onclick="clearSelection()">Clear</button>
+          </div>
+          <div class="status-msg hidden" id="uploadStatus"></div>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <h2>My Files</h2>
+            <button class="btn btn-secondary btn-compact" onclick="listFiles()">Refresh List</button>
+          </div>
+          <ul class="file-list" id="fileList"></ul>
+          <div class="status-msg hidden" id="filesStatus"></div>
+        </section>
+      </div>
     </main>
 
-    <footer>
-      SECURE_FILE_SHARE // NEARSHARE_RS // MDNS_DISTRIBUTED // RAW_MONOCHROME
+    <footer class="footer">
+      &copy; 2026 NearShare // Secure Distributed Storage // Built with Rust
     </footer>
   </div>
 
@@ -389,29 +491,47 @@
     const SESSION_TOKEN_KEY = 'nearshare.session.token';
     const THEME_KEY = 'nearshare.theme';
 
+    // DOM Elements
     const authCard = document.getElementById('authCard');
-    const transferPanel = document.getElementById('transferPanel');
-    const filesCard = document.getElementById('filesCard');
+    const dashboard = document.getElementById('dashboard');
+    const howToUseSection = document.getElementById('howToUseSection');
     const connectionPill = document.getElementById('connectionPill');
     const fileInput = document.getElementById('fileInput');
     const fileList = document.getElementById('fileList');
     const dropzone = document.getElementById('dropzone');
     const uploadToggle = document.getElementById('uploadToggle');
-    const sessionMetric = document.getElementById('sessionMetric');
-    const transferMetric = document.getElementById('transferMetric');
-    const filesMetric = document.getElementById('filesMetric');
     const themeToggle = document.getElementById('themeToggle');
 
     function setStatus(id, msg, type = '') {
       const el = document.getElementById(id);
       if (!el) return;
       el.textContent = msg || '';
+      el.className = 'status-msg';
+      el.style.color = '';
+      if (msg) el.classList.remove('hidden');
+      else el.classList.add('hidden');
+      if (type === 'error') el.style.color = 'var(--error)';
+      if (type === 'success') el.style.color = 'var(--ok)';
+    }
+
+    function toggleSection(section) {
+      if (section === 'how-to-use') {
+        howToUseSection.classList.remove('hidden');
+        authCard.classList.add('hidden');
+        dashboard.classList.add('hidden');
+      } else {
+        howToUseSection.classList.add('hidden');
+        if (token) {
+          dashboard.classList.remove('hidden');
+        } else {
+          authCard.classList.remove('hidden');
+        }
+      }
     }
 
     function setConnected(connected) {
-      connectionPill.textContent = connected ? 'AUTHORIZED' : 'LOCKED';
-      connectionPill.className = connected ? 'online' : '';
-      sessionMetric.textContent = connected ? 'ACTIVE' : 'LOCKED';
+      connectionPill.textContent = connected ? 'Authorized' : 'Locked';
+      connectionPill.className = connected ? 'status-badge online' : 'status-badge';
     }
 
     function setSessionToken(nextToken) {
@@ -425,25 +545,20 @@
 
     function showAuthenticatedUi() {
       authCard.classList.add('hidden');
-      transferPanel.classList.remove('hidden');
-      filesCard.classList.remove('hidden');
+      dashboard.classList.remove('hidden');
+      howToUseSection.classList.add('hidden');
       setConnected(true);
-      setStatus('authStatus', '');
     }
 
     function showLoggedOutUi(message = '') {
       authCard.classList.remove('hidden');
-      transferPanel.classList.add('hidden');
-      filesCard.classList.add('hidden');
+      dashboard.classList.add('hidden');
+      howToUseSection.classList.add('hidden');
       fileList.innerHTML = '';
       fileInput.value = '';
       uploadToggle.checked = false;
       dropzone.style.display = 'none';
-      transferMetric.textContent = 'IDLE';
-      filesMetric.textContent = '0_OBJ';
       setConnected(false);
-      setStatus('filesStatus', '');
-      setStatus('uploadStatus', '');
       setStatus('authStatus', message);
     }
 
@@ -455,7 +570,7 @@
 
       const response = await fetch(url, { ...options, headers });
       if (response.status === 401) {
-        logout('SESSION_EXPIRED');
+        logout('Session expired. Please sign in again.');
       }
 
       return response;
@@ -472,7 +587,7 @@
       const password = document.getElementById('password').value;
 
       if (!username || !password) {
-        setStatus('authStatus', 'ENTRY_REQUIRED');
+        setStatus('authStatus', 'Please enter your credentials.', 'error');
         return;
       }
 
@@ -487,7 +602,7 @@
         });
 
         if (!response.ok) {
-          setStatus('authStatus', 'ACCESS_DENIED');
+          setStatus('authStatus', 'Invalid username or password.', 'error');
           setConnected(false);
           return;
         }
@@ -497,32 +612,25 @@
           setSessionToken(data.token);
           showAuthenticatedUi();
           await listFiles();
-        } else {
-          setStatus('authStatus', 'SERVER_ERROR');
-          setConnected(false);
         }
       } catch (err) {
-        setStatus('authStatus', 'CONN_FAILURE');
-        setConnected(false);
+        setStatus('authStatus', 'Connection failed. Please check your network.', 'error');
       } finally {
         loginBtn.disabled = false;
       }
     }
 
     async function listFiles() {
-      setStatus('filesStatus', 'SYNCING...');
+      setStatus('filesStatus', 'Syncing your files...');
       try {
         const response = await authorizedFetch('/api/files');
-        if (!response.ok) {
-          setStatus('filesStatus', 'SYNC_FAILED');
-          return;
-        }
+        if (!response.ok) return;
 
         const files = await response.json();
         fileList.innerHTML = '';
 
         if (!files.length) {
-          fileList.innerHTML = '<li class="file-item"><div class="file-info"><span class="name">INDEX_EMPTY</span></div></li>';
+          fileList.innerHTML = '<li class="file-item"><div class="file-info"><span class="name">No files found</span><span class="meta">Upload some files to get started</span></div></li>';
         } else {
           files.sort((a, b) => a.localeCompare(b));
           files.forEach((file) => {
@@ -536,27 +644,31 @@
             name.className = 'name';
             name.textContent = file;
 
+            const meta = document.createElement('span');
+            meta.className = 'meta';
+            meta.textContent = 'Securely Stored';
+
             const btn = document.createElement('button');
-            btn.textContent = 'EXTRACT';
+            btn.className = 'btn btn-secondary btn-compact';
+            btn.textContent = 'Download';
             btn.onclick = () => downloadFile(file);
 
             info.appendChild(name);
+            info.appendChild(meta);
             li.appendChild(info);
             li.appendChild(btn);
             fileList.appendChild(li);
           });
         }
-
-        setStatus('filesStatus', `ACTIVE: ${files.length}`);
-        filesMetric.textContent = `${files.length}_OBJ`;
+        setStatus('filesStatus', '');
       } catch (err) {
-        setStatus('filesStatus', 'UNREACHABLE');
+        setStatus('filesStatus', 'Could not sync files.', 'error');
       }
     }
 
     async function uploadFile() {
       if (!fileInput.files.length) {
-        setStatus('uploadStatus', 'NO_DATA');
+        setStatus('uploadStatus', 'Please select at least one file.', 'error');
         return;
       }
 
@@ -567,7 +679,7 @@
 
       const uploadBtn = document.getElementById('uploadBtn');
       uploadBtn.disabled = true;
-      setStatus('uploadStatus', 'ENCRYPTING...');
+      setStatus('uploadStatus', 'Encrypting and sending...');
 
       try {
         const response = await authorizedFetch('/api/upload', {
@@ -576,29 +688,29 @@
         });
 
         if (!response.ok) {
-          setStatus('uploadStatus', 'TRANS_FAIL');
+          setStatus('uploadStatus', 'Upload failed.', 'error');
           return;
         }
 
         clearSelection();
         uploadToggle.checked = false;
         dropzone.style.display = 'none';
-        setStatus('uploadStatus', 'COMPLETE');
+        setStatus('uploadStatus', 'File uploaded successfully!', 'success');
         await listFiles();
       } catch (err) {
-        setStatus('uploadStatus', 'ENDPOINT_ERROR');
+        setStatus('uploadStatus', 'Network error during upload.', 'error');
       } finally {
         uploadBtn.disabled = false;
       }
     }
 
     async function downloadFile(filename) {
-      setStatus('filesStatus', `EXTRACTING: ${filename}`);
+      setStatus('filesStatus', `Downloading ${filename}...`);
 
       try {
         const response = await authorizedFetch(`/api/download/${encodeURIComponent(filename)}`);
         if (!response.ok) {
-          setStatus('filesStatus', 'FAIL');
+          setStatus('filesStatus', 'Download failed.', 'error');
           return;
         }
 
@@ -612,27 +724,26 @@
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
-        setStatus('filesStatus', `DONE: ${filename}`);
+        setStatus('filesStatus', '');
       } catch (err) {
-        setStatus('filesStatus', 'STREAM_ERROR');
+        setStatus('filesStatus', 'Network error during download.', 'error');
       }
     }
 
     function clearSelection() {
       fileInput.value = '';
-      transferMetric.textContent = uploadToggle.checked ? 'ARMED' : 'IDLE';
-      setStatus('uploadStatus', 'PURGED');
+      setStatus('uploadStatus', '');
     }
 
-    function logout(message = 'SESSION_TERM') {
+    function logout(message = 'Signed out.') {
       setSessionToken(null);
       showLoggedOutUi(message);
     }
 
     function applyTheme(theme) {
       document.body.dataset.theme = theme;
-      themeToggle.textContent = theme === 'dark' ? 'INVERT_TO_LIGHT' : 'INVERT_TO_DARK';
       localStorage.setItem(THEME_KEY, theme);
+      themeToggle.textContent = theme === 'dark' ? 'Theme Light' : 'Theme Dark';
     }
 
     async function restoreSession() {
@@ -643,27 +754,24 @@
       }
 
       setSessionToken(savedToken);
-      setStatus('authStatus', 'RESUMING...');
+      setStatus('authStatus', 'Resuming session...');
 
       try {
         const response = await authorizedFetch('/api/session');
         if (!response.ok) {
-          if (response.status !== 401) {
-            showLoggedOutUi('RESUME_FAIL');
-          }
+          showLoggedOutUi('');
           return;
         }
 
         showAuthenticatedUi();
         await listFiles();
       } catch (err) {
-        showLoggedOutUi('RESUME_FAIL');
+        showLoggedOutUi('');
       }
     }
 
     uploadToggle.addEventListener('change', () => {
       dropzone.style.display = uploadToggle.checked ? 'block' : 'none';
-      transferMetric.textContent = uploadToggle.checked ? 'ARMED' : 'IDLE';
       if (!uploadToggle.checked) {
         clearSelection();
       }
@@ -683,16 +791,14 @@
       dropzone.classList.remove('dragover');
       if (e.dataTransfer && e.dataTransfer.files.length) {
         fileInput.files = e.dataTransfer.files;
-        transferMetric.textContent = `${e.dataTransfer.files.length}_QUEUED`;
-        setStatus('uploadStatus', `${e.dataTransfer.files.length}_OBJ_STAGED`);
+        setStatus('uploadStatus', `${e.dataTransfer.files.length} file(s) ready.`);
       }
     });
 
     fileInput.addEventListener('change', (e) => {
       const count = e.target.files.length;
       if (count) {
-        transferMetric.textContent = `${count}_QUEUED`;
-        setStatus('uploadStatus', `${count}_OBJ_STAGED`);
+        setStatus('uploadStatus', `${count} file(s) ready.`);
       }
     });
 
